@@ -2,7 +2,6 @@ import { Component } from "@angular/core";
 import { FileUploader, FileLikeObject } from "ng2-file-upload";
 import * as FileSaver from "file-saver";
 
-// const URL = '/api/';
 const URL = "IPMasking/post";
 
 @Component({
@@ -35,8 +34,6 @@ export class Ng2FileLoaderComponent {
 
     this.response = "";
 
-   // this.uploader.response.subscribe((res) => (this.response = res));
-
     this.uploader.onSuccessItem = (
       item: any,
       response: any,
@@ -47,7 +44,7 @@ export class Ng2FileLoaderComponent {
         type:
           "text/plain",
       });
-      FileSaver.saveAs(blob, item.file.name); //using FileSaver.js
+      FileSaver.saveAs(blob, item.file.name);
     };
     this.uploader.onWhenAddingFileFailed = (item, filter, options) => this.onWhenAddingFileFailed(item, filter, options);
   }
