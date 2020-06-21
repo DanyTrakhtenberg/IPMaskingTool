@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { FileUploader, FileLikeObject } from "ng2-file-upload";
 import * as FileSaver from "file-saver";
 
+// const URL = '/api/';
 const URL = "IPMasking/post";
 
 @Component({
@@ -13,13 +14,13 @@ export class Ng2FileLoaderComponent {
   hasBaseDropZoneOver: boolean;
   hasAnotherDropZoneOver: boolean;
   response: string;
-  maxFileSize = 5*1024*1024;
+  maxFileSize = 5 * 1024 * 1024;
   allowedMimeType = ["text/plain"];
-  allowedFileType = ['log']
   constructor() {
     this.uploader = new FileUploader({
       url: URL,
-      maxFileSize:this.maxFileSize,
+      allowedMimeType: this.allowedMimeType,
+      maxFileSize: this.maxFileSize,
       headers: [
         { name: "Accept", value: "text/plain" },
         { name: "responseType", value: "blob" },
@@ -41,12 +42,12 @@ export class Ng2FileLoaderComponent {
       headers: any
     ) => {
       var blob = new Blob([response], {
-        type:
-          "text/plain",
+        type: "text/plain",
       });
       FileSaver.saveAs(blob, item.file.name);
     };
-    this.uploader.onWhenAddingFileFailed = (item, filter, options) => this.onWhenAddingFileFailed(item, filter, options);
+    this.uploader.onWhenAddingFileFailed = (item, filter, options) =>
+      this.onWhenAddingFileFailed(item, filter, options);
   }
 
   public fileOverBase(e: any): void {
@@ -59,13 +60,17 @@ export class Ng2FileLoaderComponent {
   onWhenAddingFileFailed(item: FileLikeObject, filter: any, options: any) {
     let errorMessage = "";
     switch (filter.name) {
-        case 'fileSize':
-            errorMessage = `Maximum upload size exceeded (${item.size} of ${this.maxFileSize} allowed)`;
-            break;
-        default:
-            errorMessage = `Unknown error (filter is ${filter.name})`;
+      case "fileSize":
+        errorMessage = `Maximum upload size exceeded (${item.size} of ${this.maxFileSize} allowed)`;
+        break;
+      case "mimeType":
+        const allowedTypes = this.allowedMimeType.join();
+        errorMessage = `Type "${item.type} is not allowed. Allowed types: "${allowedTypes}"`;
+        break;
+      default:
+        errorMessage = `Unknown error (filter is ${filter.name})`;
     }
     alert(errorMessage);
     console.error(errorMessage);
-}
+  }
 }
